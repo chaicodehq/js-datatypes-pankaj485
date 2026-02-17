@@ -29,4 +29,49 @@
  */
 export function maskAadhaar(aadhaarNumber) {
   // Your code here
+
+  if (
+    !aadhaarNumber ||
+    typeof aadhaarNumber !== "string" ||
+    aadhaarNumber.trim().length !== 12
+  ) {
+    return "INVALID";
+  }
+
+  const includesInvalidChars =
+    aadhaarNumber.includes("-") || aadhaarNumber.includes(" ");
+  const onlyNumsRegex = /^[0-9]+$/.test(aadhaarNumber);
+
+  if (includesInvalidChars || !onlyNumsRegex) {
+    return "INVALID";
+  }
+
+  const chunkLength = 4;
+  const splittedValues = [];
+  let chunkCount = 1;
+
+  for (let i = 0; i < 12; i++) {
+    let currentChunk = "";
+
+    if ((i + 1) % 4 === 0) {
+      if (chunkCount !== chunkLength - 1) {
+        splittedValues.push("X".repeat(4));
+      } else {
+        const start = i - 3;
+        const end = i;
+        currentChunk = "";
+
+        for (let i = start; i <= end; i++) {
+          currentChunk += aadhaarNumber[i];
+        }
+
+        splittedValues.push(currentChunk);
+      }
+
+      chunkCount++;
+    }
+  }
+
+  const maskedAaddhar = splittedValues.join("-");
+  return maskedAaddhar;
 }
