@@ -42,4 +42,79 @@
  */
 export function generateReportCard(student) {
   // Your code here
+
+  if (
+    !student ||
+    typeof student !== "object" ||
+    !student.name ||
+    typeof student.name !== "string" ||
+    !student.marks ||
+    typeof student.marks !== "object"
+  ) {
+    return null;
+  }
+
+  const { name, marks } = student;
+
+  const hasInvalidMark = Object.values(marks).some(
+    (_) => _ < 0 || _ > 100 || typeof _ !== "number",
+  );
+
+  if (hasInvalidMark) {
+    return null;
+  }
+
+  const result = {
+    name,
+    totalMarks: null,
+    percentage: 0,
+    grade: null,
+    highestSubject: null,
+    lowestSubject: null,
+    passedSubjects: [],
+    failedSubjects: [],
+    subjectCount: Object.keys(marks).length,
+  };
+
+  const subjects = Object.entries(marks);
+
+  if (subjects.length === 0) {
+    return null;
+  }
+
+  const sortedSubjects = Object.entries(marks).sort((a, b) => a[1] - b[1]);
+
+  // total marks
+  result.totalMarks = Object.values(sortedSubjects)
+    .map((_) => _[1])
+    .reduce((p, c) => p + c, 0);
+
+  // hightest and lowest subjects
+  result.lowestSubject = sortedSubjects[0][0];
+  result.highestSubject = sortedSubjects[sortedSubjects.length - 1][0];
+
+  // passing and failing subjects
+  result.passedSubjects = subjects.filter((_) => _[1] >= 40).map((_) => _[0]);
+  result.failedSubjects = subjects.filter((_) => _[1] < 40).map((_) => _[0]);
+
+  // precentage
+  result.percentage = (result.totalMarks / (result.subjectCount * 100)) * 100;
+  result.percentage = Number(result.percentage.toFixed(2));
+
+  // grade
+  if (result.percentage >= 90) {
+    result.grade = "A+";
+  } else if (result.percentage >= 80) {
+    result.grade = "A";
+  } else if (result.percentage >= 70) {
+    result.grade = "B";
+  } else if (result.percentage >= 60) {
+    result.grade = "C";
+  } else if (result.percentage >= 40) {
+    result.grade = "D";
+  } else {
+    result.grade = "F";
+  }
+
+  return result;
 }
