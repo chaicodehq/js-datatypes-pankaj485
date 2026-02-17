@@ -41,6 +41,53 @@
  *   generateLocalPass(null)
  *   // => "INVALID PASS"
  */
+
+const toTitleCase = (data) => {
+  if (typeof data != "string") {
+    return "";
+  }
+
+  const dataLength = data.length;
+  const firstLetter = data.charAt(0).toUpperCase();
+  const response = `${firstLetter}${data.toLowerCase().slice(1, dataLength)}`;
+
+  return response;
+};
+
 export function generateLocalPass(passenger) {
   // Your code here
+
+  if (
+    !passenger ||
+    typeof passenger !== "object" ||
+    passenger === null ||
+    !passenger.name ||
+    !passenger.from ||
+    !passenger.to ||
+    !passenger.classType
+  ) {
+    return "INVALID PASS";
+  }
+
+  const { classType, from, name, to } = passenger;
+  const validClassTypes = ["first", "second"];
+
+  if (!validClassTypes.includes(classType.trim().toLowerCase())) {
+    return "INVALID PASS";
+  }
+
+  const passId =
+    `${classType.charAt(0)}${from.slice(0, 3)}${to.slice(0, 3)}`.toUpperCase();
+
+  const line1 = "MUMBAI LOCAL PASS";
+  const line2 = "---";
+  const line3 = `Name: ${name.toUpperCase()}`;
+  const line4 = `From: ${toTitleCase(from)}`;
+  const line5 = `To: ${toTitleCase(to)}`;
+  const line6 = `Class: ${classType.toUpperCase()}`;
+  const line7 = `Pass ID: ${passId}`;
+
+  const output = [line1, line2, line3, line4, line5, line6, line7].join("\n");
+
+  return output;
 }
